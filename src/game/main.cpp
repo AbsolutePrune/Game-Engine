@@ -6,11 +6,11 @@ using namespace myengine;
 struct Player : Component
 {
 	void onTick() {
-		std::cout << "ticking" << std::endl;
+		//std::cout << "ticking" << std::endl;
 	}
 };
 
-int main()
+int main(int argc, char* argv[])
 {
 
 std::cout << "hello world" << std::endl;
