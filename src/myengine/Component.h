@@ -6,6 +6,9 @@ namespace myengine {
 
 	struct Entity;
 
+	/**
+	* 
+	*/
 	struct Component
 	{
 

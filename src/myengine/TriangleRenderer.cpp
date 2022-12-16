@@ -3,9 +3,9 @@
 namespace myengine
 {
 	TriangleRenderer::TriangleRenderer():
-		m_shader("data/shaders/basic.vert", "data/shaders/basic.frag")
+		m_shader("../data/shaders/basic.vert", "../data/shaders/basic.frag")
 	{
-		m_mesh.loadQuad();
+		m_mesh.loadTriangle();
 	}
 
 	void TriangleRenderer::onDisplay()
@@ -14,7 +14,7 @@ namespace myengine
 
 		r.shader(&m_shader);
 		r.mesh(&m_mesh);
-
+		//r.texture(m_texture->internalTexture())
 		r.render();
 	}
 }

@@ -1,0 +1,5 @@
+PROJECT_NAME = myengine
+INPUT = src/myengine src/game
+RECURSIVE = YES
+EXTRACT_ALL = YES
+EXTRACT_PRIVATE = YES

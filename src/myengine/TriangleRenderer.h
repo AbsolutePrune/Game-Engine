@@ -12,5 +12,6 @@ namespace myengine
 		rend::Shader m_shader;
 
 		void onDisplay();
+		// TODO: setTexture
 	};
 }
