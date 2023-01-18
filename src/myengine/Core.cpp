@@ -1,10 +1,13 @@
 #include "Core.h"
 #include "Entity.h"
 #include "ResourceList.h"
+#include "Environment.h"
 #include <stdexcept>
 #include <rend/rend.h>
 #include <chrono>
 #include <iostream>
+#include "Transform.h"
+
 
 namespace myengine 
 {
@@ -56,16 +59,10 @@ namespace myengine
 		}
 
 		alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
-		//alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 
-		///*************************************************************************
-		// * Cleanup
-		// *************************************************************************/
-		//alDeleteSources(1, &sourceId);
-		//alDeleteBuffers(1, &bufferId);
-		//alcMakeContextCurrent(NULL);
-		//alcDestroyContext(m_audioContext);
-		//alcCloseDevice(m_device);
+		rtn->m_keyboard = std::make_shared<Keyboard>();
+		rtn->m_rList = std::make_shared<ResourceList>();
+		rtn->m_environment = std::make_shared<Environment>();
 
 		return rtn;
 	}
@@ -73,8 +70,6 @@ namespace myengine
 	void Core::start() {
 
 		m_running = true;
-
-		std::chrono::steady_clock::time_point lastTime = std::chrono::high_resolution_clock::now();
 
 		SDL_Event event = { 0 };
 
@@ -85,25 +80,32 @@ namespace myengine
 				{
 					m_running = false;
 				}
+				else
+				{
+					switch (event.type)
+					{
+					case SDL_KEYUP:
+						getKeyBoard()->keyUp(event.key.keysym.sym);
+						break;
+					case SDL_KEYDOWN:
+						getKeyBoard()->keyDown(event.key.keysym.sym);
+						break;
+					
+					default:
+						break;
+					}
+				}
 			}
-			std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
-			std::chrono::milliseconds diff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime);
-			lastTime = currentTime;
+
+			rend::Renderer r(640, 480);
+			r.clear();
 
 			for (std::list<std::shared_ptr<Entity> >::iterator it = m_entities.begin();
 				it != m_entities.end();
 				it++)
 			{
 				(*it)->tick();
-			}
-
-			float dt = diff.count() / 1000.0f;
-			std::cout << "Delta time: " << dt << std::endl;
-
-			rend::Renderer r(640, 480);
-			// need to specify color i think
-			r.clear();
-			
+			}	
 
 			for (std::list<std::shared_ptr<Entity> >::iterator it = m_entities.begin();
 				it != m_entities.end();
@@ -112,6 +114,30 @@ namespace myengine
 				(*it)->display();
 			}
 
+			for (std::list<std::shared_ptr<Entity> >::iterator it = m_entities.begin();
+				it != m_entities.end();
+				//it++
+				)
+			{
+				if (!(*it)->m_alive)
+				{
+
+					(*it)->erase();
+
+
+					std::list<std::shared_ptr<Entity> >::iterator pos = m_entities.erase(it);
+					std::cout << "erased entity" << std::endl;
+					if (pos != m_entities.end())
+					{
+						pos++;
+					}
+					it = pos;
+				}
+				else
+				{
+					it++;
+				}
+			}
 
 			SDL_GL_SwapWindow(m_window);
 		}
@@ -125,12 +151,33 @@ namespace myengine
 
 	std::shared_ptr<ResourceList> Core::getResourceList()
 	{
-		std::shared_ptr<ResourceList> rtn = std::make_shared<ResourceList>();
-		return rtn;
+		return m_rList;
+	}
+
+	std::shared_ptr<Environment> Core::getEnvironment()
+	{
+		std::shared_ptr<Environment> environment = m_environment.lock();
+		return environment;
+	}
+
+	float Core::getDeltaTime()
+	{
+		std::shared_ptr<Environment> environment = m_environment.lock();
+		return environment->getDeltaTime();
+	}
+
+	std::shared_ptr<Keyboard> Core::getKeyBoard()
+	{
+		return m_keyboard;
 	}
 
 	std::shared_ptr<Entity> Core::addEntity() {
 		std::shared_ptr<Entity> rtn = std::make_shared<Entity>();
+
+		rtn->m_core = m_self;
+		rtn->m_self = rtn;
+		rtn->m_transform = rtn->addComponent<Transform>();
+		rtn->m_alive = true;
 
 		m_entities.push_back(rtn);
 

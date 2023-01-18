@@ -40,9 +40,46 @@ add_library(myengine
 
     src/myengine/TriangleRenderer.cpp
     src/myengine/TriangleRenderer.h
+
+    src/myengine/SoundSource.cpp
+    src/myengine/SoundSource.h
+
+    src/myengine/Resource.cpp
+    src/myengine/Resource.h
+
+    src/myengine/ResourceList.cpp
+    src/myengine/ResourceList.h
+
+    src/myengine/Audio.cpp
+    src/myengine/Audio.h
+
+    src/myengine/Environment.cpp
+    src/myengine/Environment.h
+
+    src/myengine/Keyboard.cpp
+    src/myengine/Keyboard.h
+
+    src/myengine/Texture.cpp
+    src/myengine/Texture.h
+
+    src/myengine/Model.cpp
+    src/myengine/Model.h
+
+    src/myengine/Transform.cpp
+    src/myengine/Transform.h
+
+    src/myengine/BoxCollider.cpp
+    src/myengine/BoxCollider.h
+
+    src/myengine/RigidBody.cpp
+    src/myengine/RigidBody.h
+
+    src/myengine/Controller.cpp
+    src/myengine/Controller.h
+
 )
 
-target_link_libraries(myengine SDL2 SDL2main rend)
+target_link_libraries(myengine SDL2 SDL2main rend OpenAL32)
 
 add_executable(game
     src/game/main.cpp

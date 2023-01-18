@@ -7,10 +7,10 @@ namespace myengine
 
 	}
 
-	void Resource::onCreate()
+	/*void Resource::onCreate()
 	{
 
-	}
+	}*/
 
 	std::string Resource::getPath() const
 	{

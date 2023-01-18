@@ -1,12 +1,36 @@
 #include "SoundSource.h"
 #include "stb_vorbis.c"
 #include <stdexcept>
-
+#include "Entity.h"
 #include <AL/alc.h>
 
 namespace myengine
 {
+
 	SoundSource::SoundSource()
+	{
+		
+
+	}
+
+	void SoundSource::onTick()
+	{
+
+		/*************************************************************************
+		 * Tick
+		 *************************************************************************/
+		alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+
+		int state = 0;
+		alGetSourcei(m_sourceId, AL_SOURCE_STATE, &state);
+		if (state != AL_PLAYING)
+		{
+			kill();
+			
+		}
+	}
+
+	void SoundSource::setAudio(std::shared_ptr<Resource> _clip)
 	{
 		/*************************************************************************
 		* Preparing buffer
@@ -14,7 +38,7 @@ namespace myengine
 		ALenum format = 0;
 		ALsizei freq = 0;
 		std::vector<unsigned char> bufferData;
-		load_ogg("../dixie_horn.ogg", bufferData, format, freq);
+		load_ogg(_clip->getPath(), bufferData, format, freq);
 
 		ALuint bufferId = 0;
 		alGenBuffers(1, &bufferId);
@@ -25,10 +49,9 @@ namespace myengine
 		/*************************************************************************
 		 * Preparing sound source
 		 *************************************************************************/
-		ALuint sourceId = 0;
-		alGenSources(1, &sourceId);
+		alGenSources(1, &m_sourceId);
 
-		alSourcei(sourceId, AL_BUFFER, bufferId);
+		alSourcei(m_sourceId, AL_BUFFER, bufferId);
 		//alSource3f(sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
 		//alSourcef(sourceId, AL_PITCH, 10);
 		//alSourcef(sourceId, AL_GAIN, vol);
@@ -36,30 +59,9 @@ namespace myengine
 		/*************************************************************************
 		 * Play audio
 		 *************************************************************************/
-		alSourcePlay(sourceId);
-
+		alSourcePlay(m_sourceId);
 	}
 
-	void SoundSource::onTick()
-	{
-
-		/*************************************************************************
-		 * Tick
-		 *************************************************************************/
-
-		
-			//int state = 0;
-			//alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
-			//if (state != AL_PLAYING) break;
-
-			//alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
-	}
-
-	std::shared_ptr<Audio> SoundSource::setAudio(std::shared_ptr<Audio> _clip)
-	{
-		//
-	}
-	
 
 	void SoundSource::load_ogg(const std::string& _path, std::vector<unsigned char>& _buffer,
 		ALenum& _format, ALsizei& _freq)

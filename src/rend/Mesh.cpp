@@ -121,7 +121,7 @@ GLuint Mesh::id()
 }
 
 static void split_string_whitespace(const sys::String& _input,
-  sys::Vector<sys::String> _output)
+  sys::Vector<sys::String>& _output)
 {
   _output.clear();
   sys::String curr;
@@ -151,7 +151,7 @@ static void split_string_whitespace(const sys::String& _input,
 }
 
 static void split_string(const sys::String& _input, char splitter,
-  sys::Vector<sys::String> _output)
+  sys::Vector<sys::String>& _output)
 {
   _output.clear();
   sys::String curr;
@@ -279,6 +279,8 @@ void Mesh::loadGuiQuad()
 
 void Mesh::load(const sys::String& _path)
 {
+  m_faces.clear();
+
   if(m_buffers.begin() != m_buffers.end())
   {
     sys::panic("Buffers already loaded");
@@ -296,6 +298,8 @@ void Mesh::load(const sys::String& _path)
     if(line.length() < 1) continue;
 
     split_string_whitespace(line, tokens);
+
+    if(tokens.size() < 1) continue;
 
     if(tokens[0] == "v" && tokens.size() >= 4)
     {

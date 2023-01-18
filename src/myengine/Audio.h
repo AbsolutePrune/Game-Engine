@@ -1,15 +1,16 @@
 #include "Resource.h"
-#include <rend/rend.h>
+
 
 namespace myengine
 {
+	/// @brief Audio resource
 	struct Audio : Resource
 	{
-		void onCreate(int _width, int _height);
 
 	private:
-
+		/// @brief redefinition of virtual onLoad from Resource
 		void onLoad();
+
 
 	};
 }
